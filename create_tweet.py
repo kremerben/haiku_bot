@@ -1,20 +1,12 @@
 import json
 import random
 
-# from botocore.vendored import requests  # for AWS lambda
 import requests  # for local development
 import sys
 import time
 import tweepy
 
 from credentials import *  # use this one for testing
-
-# use this for production; set vars in heroku dashboard
-# from os import environ
-# CONSUMER_KEY = environ['CONSUMER_KEY']
-# CONSUMER_SECRET = environ['CONSUMER_SECRET']
-# ACCESS_KEY = environ['ACCESS_KEY']
-# ACCESS_SECRET = environ['ACCESS_SECRET']
 
 HAIKU_API = "https://haiku.kremer.dev"
 
@@ -44,12 +36,12 @@ class HaikuBot:
         self.trends = self.get_twitter_trends(self.woeid)
 
     def run(self):
-        keywords = self.get_trends()
+        keywords = self.trends
         keyword = random.choice(
             [keyword for keyword in keywords if keyword.isalpha() and keyword[1:].islower()]
         )
-        generated_haiku = request_haiku(keyword)
-        full_haiku = format_haiku(keyword, generated_haiku)
+        generated_haiku = self.request_haiku(keyword)
+        full_haiku = self.format_haiku(keyword, generated_haiku)
 
         tweepy_api.update_status(" \n".join(full_haiku))
         print(" \n".join(full_haiku))
